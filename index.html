@@ -1,22 +1,90 @@
-<!DOCTYPE html>
-<html>
-    <head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.13/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+<script src="node_modules/datamaps/dist/datamaps.all.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/style.css"></link>
 
-        <meta charset="utf-8">
+<!-- Latest compiled bootstrap JavaScript -->
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
-        <link rel="stylesheet" type="text/css" href="css/custom.css">
-        <script type="text/javascript" src="js/map.js"></script>
 
-    </head>
+<body style="height: 100%; width = 100%; background: linear-gradient(to left, #E6DADA , gray);">
+<div class="jumbotron text-center"  id="top" style="background-color: gray; position: relative; width: 100%; height: 10%;">
+    <h1> SearchView... </h1>
+</div>
+   
+<div id="container" style="position: relative; width: 100%; height: 80%; padding: 0 0 0 0; padding-bottom: 0 !"></div>
 
-    <body>
+</body> 
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
-    <div id="map"></div>
+<script>
 
-    <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDuHvGK_m7DC-pQ1aUovswyJ-C1cj0iKFM&callback=initMap">
-    </script>
 
-    </body>
+    var map = new Datamap({
+        element: document.getElementById('container'),
+        scope: 'world',     
+        fills: {
+                defaultFill: 'rgba(23,48,210,0.9)', //any hex, color name or rgb/rgba value
+                win: '#0fa0fa',
+                USA: 'yellow',
+                RUS: 'red'
+        },
+        data: {
+            'TX': { fillKey: 'win' },
+            'FL': { fillKey: 'win' },
+            'NC': { fillKey: 'win' },
+            'CA': { fillKey: 'win' },
+            'NY': { fillKey: 'win' },
+            'CO': { fillKey: 'win' }
+        },
+        geographyConfig: {
+            dataUrl: null, //if not null, datamaps will fetch the map JSON (currently only supports topojson)
+            hideAntarctica: true,
+            borderWidth: 1,
+            borderOpacity: 1,
+            borderColor: '#FDFDFD',
+            popupTemplate: function(geography, data) { //this function should just return a string
+              return '&lt;div class="hoverinfo"&gt;&lt;strong&gt;' + geography.properties.name + '&lt;/strong&gt;&lt;/div&gt;';
+            },
+            popupOnHover: false, //disable the popup while hovering
+            highlightOnHover: true,
+            highlightFillColor: '#34b3a0',
+            highlightBorderColor: '#135058',
+            highlightBorderWidth: 2,
+            highlightBorderOpacity: .5
+        },
+        done: function(datamap) {
+            datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
+            d3.select("#top").append("p").text(geography.properties.name);
+         });
+        }
+    });   
+    map.bubbles([
+  {
+    name: 'Castle Bravo',
+    radius: 15,
+    yeild: 15000,
+    country: 'USA',
+    significance: 'First dry fusion fuel "staged" thermonuclear weapon; a serious nuclear fallout accident occurred',
+    fillKey: 'USA',
+    date: '1954-03-01',
+    latitude: 11.415,
+    longitude: 165.1619
+  },{
+    name: 'Tsar Bomba',
+    radius: 15,
+    yeild: 50000,
+    country: 'USSR',
+    fillKey: 'RUS',
+    significance: 'Largest thermonuclear weapon ever tested—scaled down from its initial 100 Mt design by 50%',
+    date: '1961-10-31',
+    latitude: 73.482,
+    longitude: 54.5854
+  }
+]);
+    d3.select(window).on('resize', function() {
+        map.resize();
+    });
 
-</html>
+</script>
